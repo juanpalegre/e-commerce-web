@@ -1,55 +1,51 @@
-/*Resolución API 1
+//capturando el array productos
+import {agregarAlCarrito} from "./carrito.js"
 
-El objetivo es generar dos funciones:
-1. Dirigida a devolver una card HTML
-2. Dirigida a cargar los datos del producto y generar la card a partir de la función anterior.
+//crear una constante que es un array vacio
 
-Está muy claro, vamos a comenzar.
+export const productos = []
+//crear constante URL
+const URL = 'http://127.0.0.1:81/js/productos.json'
 
-*/
 
-//Primero vamos a importar el array de productos para que luego podamos ver los datos cargados correctamente en el navegador
+//crear funcion obtenerProductos
 
-import productos from './productos.js';
-import agregarAlCarrito from './carrito.js';
+const obtenerProductos = (productos) =>{
+    fetch(URL)
+    .then((response)=>response.json())
+    .then((data)=>productos.push(...data))
+    .then(()=>{cargarProductos(productos); activarClickEnBotones()})
 
-//Utilizamos un log para chequear que lo hayamos traido correctamente
-console.log(productos);
-console.log(agregarAlCarrito);
+}
 
-//Luego declaramos una constante para conectarnos al elemento HTML con el que deseamos trabajar
+// COMILLA INVERTIDA: ALT+96
 
-const container = document.querySelector('.container')
-
-//Creamos la funcion para generar el codigo HTML de cada card
-
-function retornarCardHTML(product) {
-    //Utilizo template String y template literals para armar el bloque HTML
+function retornarCardHTML(producto) {
     return `<div class="card">
-                <div class="card-image">${product.imagen}</div>
-                <div class="card-name">${product.nombre}</div>
-                <div class="card-price">${product.precio}</div>
-                <div class="card-button">
-                    <button class="button button-outline button-add" id=""
-                    title="Clic para agregar al carrito">+</button>  
-                </div>`
+    <div class="card-image">${producto.imagen}</div>
+    <div class="card-name">${producto.nombre}</div>
+    <div class="card-price">${producto.precio}</div>
+    <div class="card-button">
+        <button class="button button-outline button-add" id="${producto.id}" title="Clic para agregar al carrito">+</button>
+    </div>
+    </div>`
 }
 
 function cargarProductos(array){
-    array.forEach(element => {
-        container.innerHTML += retornarCardHTML(element)
+    const contenedor = document.querySelector('div.container')
+    array.forEach( producto => {
+        const card = retornarCardHTML(producto)
+        contenedor.innerHTML += card
     });
 }
 
 let activarClickEnBotones = () => {
-    const botonesAgregar = document.querySelectorAll('.button.button-outline.button-add')
-       for (const boton of botonesAgregar){
-           boton.addEventListener('click',(event)=>{
-               agregarAlCarrito(event.target.id)
-       })
-    }
+     const botonesAgregar = document.querySelectorAll('.button.button-outline.button-add')
+        for (const boton of botonesAgregar){
+            boton.addEventListener('click',(event)=>{
+                agregarAlCarrito(event.target.id)
+        })
+     }
 }
 
-cargarProductos(productos);
-activarClickEnBotones();
-
+obtenerProductos(productos)

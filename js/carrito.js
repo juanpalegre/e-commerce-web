@@ -23,4 +23,4 @@ const carritoFrutas = recuperarCarrito()
 
 console.table(carritoFrutas);
 
-export default agregarAlCarrito;
+export default {agregarAlCarrito, recuperarCarrito};
